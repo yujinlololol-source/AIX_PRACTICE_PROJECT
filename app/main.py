@@ -50,6 +50,21 @@ def user_info():
         return query
     
 # =====================================================================================================================================
+# get = read_user (특정 유저 조회)
+@app.get("/userInfo/{no_seq}", response_model = UserRead)
+def user_read(no_seq : int):
+    with session_factory() as db:
+        # no_seq로 특정 유저 정보 조회
+        stmt = select(UserInfo).where(UserInfo.no_seq == no_seq)
+        query = db.execute(stmt).scalar_one_or_none()
+        
+        # 해당 no_seq의 유저가 없으면
+        if not query:
+            raise HTTPException(status_code=404, detail="일치한 회원 정보가 없습니다.")
+        
+        return query
+
+# =====================================================================================================================================
 
 # post = create
 @app.post("/userCreate", response_model = UserCreate)
@@ -136,3 +151,4 @@ def user_login(data : UserLogin):
         
 
         return query
+
